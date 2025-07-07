@@ -173,13 +173,11 @@ body::before {
   }
 }
 
-@media (max-width: 400px) {
-  .form-container {
-    padding: 8px 2px;
-  }
-  .form-container h2 {
-    font-size: 1rem;
-  }
-}
+
+
+
+
+
+
 
 

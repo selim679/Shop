@@ -1,0 +1,124 @@
+
+.navbar {
+  z-index: 1030;
+}
+
+.navbar-brand {
+  font-family: 'Great Vibes', cursive;
+  font-size: 24px;
+}
+
+.navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #fff !important;
+}
+
+
+.site-header {
+  background: #DCDED6;
+  color: #fff;
+  padding: 10px 0;
+  margin-top: 56px;
+}
+
+.left-controls, .right-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.left-controls a, .right-controls .cart {
+  color: black;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.left-controls a:hover {
+  color: #666;
+  text-decoration: none;
+}
+
+.center-logo h1 {
+  font-size: 24px;
+  margin: 0;
+  font-family: 'Great Vibes', cursive;
+  font-size: 48px;
+  font-weight: normal;
+  color: #2e2e2e;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.search-form {
+  display: flex;
+}
+
+.search-form input {
+  padding: 5px;
+  border: 1px solid #000;
+  border-radius: 3px 0 0 3px;
+}
+
+.search-form button {
+  padding: 5px 10px;
+  border: none;
+  background-color: #000;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+  color: white;
+}
+
+.search-form button:hover {
+  background-color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+  .site-header .left-controls,
+  .site-header .right-controls {
+    justify-content: center;
+  }
+  
+  .site-header .center-logo h1 {
+    font-size: 36px;
+  }
+  
+  .site-header {
+    margin-top: 56px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .navbar-nav {
+    text-align: center;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 10px 0;
+  }
+  
+  .site-header {
+    padding: 15px 0;
+  }
+  
+  .left-controls, .right-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .site-header .center-logo h1 {
+    font-size: 28px;
+  }
+  
+  .navbar-brand {
+    font-size: 20px;
+  }
+} 
