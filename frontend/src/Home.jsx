@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Home.css';
+import './style/Home.css';
 
 export default function Home() {
   const [faqOpen, setFaqOpen] = useState(null);
@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <div className="home-page">
-      {/* Top Navigation Bar */}
+      
       <nav className="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
         <div className="container-fluid">
           <Link className="navbar-brand text-white fw-bold" to="/">Maison Langford</Link>
@@ -32,32 +32,10 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Header */}
-      <header className="site-header py-3">
-        <div className="container-fluid">
-          <div className="row align-items-center gy-2">
-            <div className="col-12 col-md-4 left-controls d-flex flex-wrap flex-md-nowrap justify-content-center justify-content-md-start gap-2">
-              <Link to="/contact">Contact</Link>
-              <Link to="/login">Login</Link>
-              <Link to="/create-account">Create Account</Link>
-            </div>
-            <div className="col-12 col-md-4 center-logo text-center mb-2 mb-md-0">
-              <h1 className="m-0" style={{fontSize: 'clamp(1.2rem,4vw,2rem)', wordBreak: 'break-word'}}>
-                Maison Langford
-              </h1>
-            </div>
-            <div className="col-12 col-md-4 right-controls d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-end gap-2">
-              <form className="search-form w-100 w-md-auto mb-2 mb-md-0 d-flex flex-nowrap">
-                <input type="text" className="form-control me-2 flex-grow-1" placeholder="Search" />
-                <button type="submit" className="btn btn-outline-secondary flex-shrink-0">🔍</button>
-              </form>
-              <div className="cart text-nowrap">🛒 Your Cart (0)</div>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      {/* Main Banner */}
+      
+
+   
       <div className="main-banner" id="top">
         <div className="container-fluid">
           <div className="row">
@@ -220,7 +198,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+
       <section className="features-section">
         <div className="features-wrapper">
           <div className="feature">
@@ -241,7 +219,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Map */}
+  
       <iframe 
         className="map" 
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d41754.138784297465!2d2.2798647415522764!3d48.86001079066407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!5e1!3m2!1sfr!2stn!4v1749823402508!5m2!1sfr!2stn" 
@@ -254,7 +232,7 @@ export default function Home() {
         title="Location Map"
       />
 
-      {/* Footer */}
+    
       <footer className="site-footer">
         <div className="footer-container">
           <div className="footer-section brand">
