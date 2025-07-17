@@ -28,7 +28,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
-// === Configuration Multer pour les uploads multiples ===
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, 'uploads');
@@ -46,7 +46,7 @@ const multiUpload = upload.fields([
   { name: 'colorImages', maxCount: 10 }
 ]);
 
-// === Stripe Checkout Session ===
+
 app.post('/api/create-checkout-session', async (req, res) => {
   const items = req.body.items;
   console.log("📦 Données reçues pour Stripe :", items);
@@ -68,10 +68,10 @@ app.post('/api/create-checkout-session', async (req, res) => {
       };
     });
 
-    // Calcul du total de la commande
+   
     const total = items.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity)), 0);
     
-    // Enregistrement de la commande dans la table orders
+    
     const [orderResult] = await db.promise().query(
       'INSERT INTO orders (total, status, created_at) VALUES (?, ?, NOW())',
       [total, 'pending']
@@ -79,7 +79,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
 
     const orderId = orderResult.insertId;
 
-    // Enregistrer les items de la commande
+  
     for (const item of items) {
       await db.promise().query(
         'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
@@ -102,9 +102,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
   }
 });
 
-// === Routes Produits ===
 
-// Créer un nouveau produit avec tailles et couleurs
 app.post('/api/products', multiUpload, async (req, res) => {
   const { 
     name, 
@@ -117,14 +115,13 @@ app.post('/api/products', multiUpload, async (req, res) => {
   } = req.body;
 
   try {
-    // Démarrer une transaction
+   
     await db.promise().beginTransaction();
 
-    // Traiter l'image principale
+    
     const mainImage = req.files['image'] ? req.files['image'][0] : null;
     const mainImageUrl = mainImage ? `/uploads/${mainImage.filename}` : '';
 
-    // Insérer le produit principal
     const [productResult] = await db.promise().query(
       `INSERT INTO products 
        (name, description, category, price, original_price, image_url) 
@@ -134,7 +131,7 @@ app.post('/api/products', multiUpload, async (req, res) => {
 
     const productId = productResult.insertId;
 
-    // Traiter les tailles
+   
     const sizesArray = sizes ? sizes.split(',') : ['S', 'M', 'L', 'XL'];
     for (const size of sizesArray) {
       await db.promise().query(
@@ -143,7 +140,7 @@ app.post('/api/products', multiUpload, async (req, res) => {
       );
     }
 
-    // Traiter les couleurs
+   
     const colorsArray = JSON.parse(colors || '[]');
     const colorImages = req.files['colorImages'] || [];
     
@@ -161,10 +158,10 @@ app.post('/api/products', multiUpload, async (req, res) => {
       );
     }
 
-    // Valider la transaction
+   
     await db.promise().commit();
 
-    // Récupérer le produit complet pour la réponse
+    
     const [product] = await db.promise().query(
       `SELECT * FROM products WHERE id = ?`, 
       [productId]
@@ -193,7 +190,7 @@ app.post('/api/products', multiUpload, async (req, res) => {
     });
 
   } catch (error) {
-    // Annuler en cas d'erreur
+    
     await db.promise().rollback();
     console.error('Error adding product:', error);
     res.status(500).json({ 
@@ -204,12 +201,12 @@ app.post('/api/products', multiUpload, async (req, res) => {
   }
 });
 
-// Récupérer tous les produits
+
 app.get('/api/products', async (req, res) => {
   try {
     const [products] = await db.promise().query('SELECT * FROM products');
     
-    // Pour chaque produit, récupérer la première couleur comme image par défaut
+    
     for (const product of products) {
       const [colors] = await db.promise().query(
         `SELECT image_url FROM product_colors WHERE product_id = ? LIMIT 1`,
@@ -232,12 +229,12 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-// Récupérer un produit spécifique avec tous ses détails
+
 app.get('/api/products/:id', async (req, res) => {
   const productId = req.params.id;
   
   try {
-    // Récupérer les infos de base du produit
+ 
     const [product] = await db.promise().query(
       `SELECT * FROM products WHERE id = ?`, 
       [productId]
@@ -250,13 +247,13 @@ app.get('/api/products/:id', async (req, res) => {
       });
     }
 
-    // Récupérer les tailles
+    
     const [sizes] = await db.promise().query(
       `SELECT size FROM product_sizes WHERE product_id = ?`,
       [productId]
     );
 
-    // Récupérer les couleurs
+    
     const [colors] = await db.promise().query(
       `SELECT name, image_url FROM product_colors WHERE product_id = ?`,
       [productId]
@@ -284,18 +281,17 @@ app.get('/api/products/:id', async (req, res) => {
   }
 });
 
-// Récupérer les produits par catégorie
+
 app.get('/api/products/category/:cat', async (req, res) => {
   const category = req.params.cat;
   
   try {
-    // Récupérer les produits de la catégorie
+  
     const [products] = await db.promise().query(
       `SELECT * FROM products WHERE category = ?`,
       [category]
     );
 
-    // Pour chaque produit, récupérer la première couleur comme image par défaut
     for (const product of products) {
       const [colors] = await db.promise().query(
         `SELECT image_url FROM product_colors WHERE product_id = ? LIMIT 1`,
@@ -318,12 +314,11 @@ app.get('/api/products/category/:cat', async (req, res) => {
   }
 });
 
-// Supprimer un produit
 app.delete('/api/products/:id', async (req, res) => {
   const productId = req.params.id;
   
   try {
-    // La suppression en cascade s'occupera des tailles et couleurs associées
+   
     await db.promise().query('DELETE FROM products WHERE id = ?', [productId]);
     res.status(204).end();
   } catch (error) {
@@ -336,7 +331,7 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
-// === Authentification ===
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -350,13 +345,13 @@ app.post('/api/login', (req, res) => {
       const dbPassword = results[0].password;
       const role = results[0].role;
 
-      // Vérification du mot de passe hashé
+      
       const match = await bcrypt.compare(password, dbPassword);
       if (!match) {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
       }
 
-      // Générer le token JWT
+   
       const token = jwt.sign({ username, role }, SECRET, { expiresIn: '2h' });
       res.json({ success: true, role, token });
     }
@@ -370,7 +365,7 @@ app.post('/api/createAccount', async (req, res) => {
     if (err) return res.status(500).json({ success: false, message: 'Database error' });
     if (results.length > 0) return res.status(409).json({ success: false, message: 'User already exists' });
 
-    // Hachage du mot de passe
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.query(
@@ -384,7 +379,7 @@ app.post('/api/createAccount', async (req, res) => {
   });
 });
 
-// === Réinitialisation de mot de passe ===
+
 app.post('/api/forgot-password', (req, res) => {
   const { email } = req.body;
 
@@ -420,7 +415,7 @@ app.post('/api/reset-password', (req, res) => {
     if (err) return res.status(500).json({ success: false, message: 'Database error' });
     if (results.length === 0) return res.status(400).json({ success: false, message: 'Code invalide' });
 
-    // Hachage du nouveau mot de passe
+  
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     db.query('UPDATE users SET password = ?, reset_code = NULL WHERE email = ?', [hashedPassword, email], (err2) => {
@@ -430,16 +425,16 @@ app.post('/api/reset-password', (req, res) => {
   });
 });
 
-// === Nodemailer Configuration ===
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'salimfekih35@gmail.com',
-    pass: 'pkqs zwrc vhfh vvzi' // ❗ Ne pas exposer en production
+    pass: 'pkqs zwrc vhfh vvzi' 
   }
 });
 
-// === Route temporaire pour créer un admin (à supprimer après usage) ===
+
 app.post('/api/create-admin', async (req, res) => {
   const { username, password, nom, prenom, email, telephone, pays } = req.body;
   if (!username || !password || !email) {
@@ -460,7 +455,7 @@ app.post('/api/create-admin', async (req, res) => {
   });
 });
 
-// Middleware de vérification admin
+
 function verifyAdmin(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ error: 'No token' });
@@ -475,23 +470,18 @@ function verifyAdmin(req, res, next) {
   }
 }
 
-// === Lancer le serveur ===
 app.listen(PORT, () => {
   console.log(`✅ Serveur backend démarré sur http://localhost:${PORT}`);
 });
 
-// Protéger les routes admin
+
 app.get('/api/admin/stats', verifyAdmin, async (req, res) => {
   try {
-    // Chiffre d'affaires total (somme des prix des commandes)
+    
     const [[{ revenue }]] = await db.promise().query('SELECT SUM(total) as revenue FROM orders WHERE status = "completed"');
-    // Nombre de commandes
     const [[{ orders }]] = await db.promise().query('SELECT COUNT(*) as orders FROM orders');
-    // Nombre de produits
     const [[{ products }]] = await db.promise().query('SELECT COUNT(*) as products FROM products');
-    // Nombre de commandes en attente
     const [[{ pendingOrders }]] = await db.promise().query('SELECT COUNT(*) as pendingOrders FROM orders WHERE status = "pending"');
-    // Nombre de commandes complétées
     const [[{ completedOrders }]] = await db.promise().query('SELECT COUNT(*) as completedOrders FROM orders WHERE status = "completed"');
 
     res.json({
@@ -507,7 +497,7 @@ app.get('/api/admin/stats', verifyAdmin, async (req, res) => {
   }
 });
 
-// Route pour récupérer toutes les commandes
+
 app.get('/api/admin/orders', verifyAdmin, async (req, res) => {
   try {
     const [orders] = await db.promise().query(`
@@ -527,7 +517,7 @@ app.get('/api/admin/orders', verifyAdmin, async (req, res) => {
   }
 });
 
-// Route pour mettre à jour le statut d'une commande
+
 app.put('/api/admin/orders/:id/status', verifyAdmin, async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
