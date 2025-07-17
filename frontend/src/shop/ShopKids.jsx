@@ -4,7 +4,7 @@ import { useCart } from '../cart/CartContext';
 import './style/ShopCategory.css';
 import Navbar from './Navbar';
 
-// Mise à jour automatique - Filtre prix en haut
+
 export default function ShopKids() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -111,8 +111,7 @@ export default function ShopKids() {
 
         <div className="shop-content">
           
-          {/* Sidebar supprimée car les filtres sont en haut */}
-          {/* <div className="filters-sidebar"> ... </div> */}
+        
 
           <div className="products-section">
             {error && (
