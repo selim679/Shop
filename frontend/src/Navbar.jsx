@@ -5,7 +5,7 @@ import './style/Navbar.css';
 export default function Navbar() {
   return (
     <>
-      {/* Top Navigation Bar */}
+      
       <nav className="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
         <div className="container-fluid">
           <NavLink className="navbar-brand text-white fw-bold" to="/">Maison Langford</NavLink>
