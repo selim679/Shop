@@ -1,4 +1,4 @@
-// Cart.jsx
+
 import React from 'react';
 import { useCart } from './CartContext';
 import axios from 'axios';
